@@ -6,8 +6,8 @@
 This project was inspired by the global success of **ROSÉ & Bruno Mars's "APT."**. Beyond its viral nature, I wanted to visualize the **cross-cultural resonance** and the invisible "bridges" that connect disparate global fanbases. This tool is designed to help marketing teams to identify "low-resistance" migration paths for artists.
 
 ### 🔗 Live Interactive Maps
-* **[View Small Dataset (200 Connections)](https://mt-msc.github.io/artist-audience-analysis/)**
-* **[View Scaled Dataset (2,500+ Connections)]**
+* **[View Small Dataset (200 Connections)](https://mt-msc.github.io/artist-audience-analysis/small-data.html)**
+* **[View Scaled Dataset (2,500+ Connections)](https://mt-msc.github.io/artist-audience-analysis/big-data.html)**
 
 ### 🛠️ Technical Stack
 * **Language**: Python
