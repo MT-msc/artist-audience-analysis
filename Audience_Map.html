@@ -1,0 +1,695 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+            <script src="lib/bindings/utils.js"></script>
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/dist/vis-network.min.css" integrity="sha512-WgxfT5LWjfszlPHXRmBWHkV2eceiWTOBvrKCNbdgDYTHrT2AeLCGbF4sZlZw3UMN3WtL0tGUoIAKsu8mllg/XA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/vis-network.min.js" integrity="sha512-LnvoEWDFrqGHlHmDD2101OrLcbsfkrzoSpvtSQtxK3RMnRV0eOkhhBN2dXHKRrUU8p2DGRTk35n4O8nWSVe1mQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+            
+                <link href="lib/tom-select/tom-select.css" rel="stylesheet">
+                <script src="lib/tom-select/tom-select.complete.min.js"></script>
+            
+        
+<center>
+<h1></h1>
+</center>
+
+<!-- <link rel="stylesheet" href="../node_modules/vis/dist/vis.min.css" type="text/css" />
+<script type="text/javascript" src="../node_modules/vis/dist/vis.js"> </script>-->
+        <link
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6"
+          crossorigin="anonymous"
+        />
+        <script
+          src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
+          integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
+          crossorigin="anonymous"
+        ></script>
+
+
+        <center>
+          <h1></h1>
+        </center>
+        <style type="text/css">
+
+             #mynetwork {
+                 width: 100%;
+                 height: 800px;
+                 background-color: #111111;
+                 border: 1px solid lightgray;
+                 position: relative;
+                 float: left;
+             }
+
+             
+             #loadingBar {
+                 position:absolute;
+                 top:0px;
+                 left:0px;
+                 width: 100%;
+                 height: 800px;
+                 background-color:rgba(200,200,200,0.8);
+                 -webkit-transition: all 0.5s ease;
+                 -moz-transition: all 0.5s ease;
+                 -ms-transition: all 0.5s ease;
+                 -o-transition: all 0.5s ease;
+                 transition: all 0.5s ease;
+                 opacity:1;
+             }
+
+             #bar {
+                 position:absolute;
+                 top:0px;
+                 left:0px;
+                 width:20px;
+                 height:20px;
+                 margin:auto auto auto auto;
+                 border-radius:11px;
+                 border:2px solid rgba(30,30,30,0.05);
+                 background: rgb(0, 173, 246); /* Old browsers */
+                 box-shadow: 2px 0px 4px rgba(0,0,0,0.4);
+             }
+
+             #border {
+                 position:absolute;
+                 top:10px;
+                 left:10px;
+                 width:500px;
+                 height:23px;
+                 margin:auto auto auto auto;
+                 box-shadow: 0px 0px 4px rgba(0,0,0,0.2);
+                 border-radius:10px;
+             }
+
+             #text {
+                 position:absolute;
+                 top:8px;
+                 left:530px;
+                 width:30px;
+                 height:50px;
+                 margin:auto auto auto auto;
+                 font-size:22px;
+                 color: #000000;
+             }
+
+             div.outerBorder {
+                 position:relative;
+                 top:400px;
+                 width:600px;
+                 height:44px;
+                 margin:auto auto auto auto;
+                 border:8px solid rgba(0,0,0,0.1);
+                 background: rgb(252,252,252); /* Old browsers */
+                 background: -moz-linear-gradient(top,  rgba(252,252,252,1) 0%, rgba(237,237,237,1) 100%); /* FF3.6+ */
+                 background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(252,252,252,1)), color-stop(100%,rgba(237,237,237,1))); /* Chrome,Safari4+ */
+                 background: -webkit-linear-gradient(top,  rgba(252,252,252,1) 0%,rgba(237,237,237,1) 100%); /* Chrome10+,Safari5.1+ */
+                 background: -o-linear-gradient(top,  rgba(252,252,252,1) 0%,rgba(237,237,237,1) 100%); /* Opera 11.10+ */
+                 background: -ms-linear-gradient(top,  rgba(252,252,252,1) 0%,rgba(237,237,237,1) 100%); /* IE10+ */
+                 background: linear-gradient(to bottom,  rgba(252,252,252,1) 0%,rgba(237,237,237,1) 100%); /* W3C */
+                 filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fcfcfc', endColorstr='#ededed',GradientType=0 ); /* IE6-9 */
+                 border-radius:72px;
+                 box-shadow: 0px 0px 10px rgba(0,0,0,0.2);
+             }
+             
+
+             
+
+             
+        </style>
+    </head>
+
+
+    <body>
+        <div class="card" style="width: 100%">
+            
+                <div id="select-menu" class="card-header">
+                    <div class="row no-gutters">
+                        <div class="col-10 pb-2">
+                            <select
+                            class="form-select"
+                            aria-label="Default select example"
+                            onchange="selectNode([value]);"
+                            id="select-node"
+                            placeholder="Select node..."
+                            >
+                                <option selected>Select a Node by ID</option>
+                                
+                                    <option value="Bruno Mars">Bruno Mars</option>
+                                
+                                    <option value="Bruno Mars, Anderson .Paak, Silk Sonic">Bruno Mars, Anderson .Paak, Silk Sonic</option>
+                                
+                                    <option value="Charlie Puth">Charlie Puth</option>
+                                
+                                    <option value="Ne-Yo">Ne-Yo</option>
+                                
+                                    <option value="Usher">Usher</option>
+                                
+                                    <option value="Maroon 5">Maroon 5</option>
+                                
+                                    <option value="Bruno Mars, Anderson .Paak & Silk Sonic">Bruno Mars, Anderson .Paak & Silk Sonic</option>
+                                
+                                    <option value="Daniel Caesar">Daniel Caesar</option>
+                                
+                                    <option value="Justin Timberlake">Justin Timberlake</option>
+                                
+                                    <option value="Rihanna">Rihanna</option>
+                                
+                                    <option value="Givēon">Givēon</option>
+                                
+                                    <option value="The Weeknd">The Weeknd</option>
+                                
+                                    <option value="Jason Derülo">Jason Derülo</option>
+                                
+                                    <option value="Craig David">Craig David</option>
+                                
+                                    <option value="Michael Jackson">Michael Jackson</option>
+                                
+                                    <option value="Justin Bieber">Justin Bieber</option>
+                                
+                                    <option value="Mario">Mario</option>
+                                
+                                    <option value="RAYE">RAYE</option>
+                                
+                                    <option value="Olivia Dean">Olivia Dean</option>
+                                
+                                    <option value="Jay Sean">Jay Sean</option>
+                                
+                                    <option value="MAGIC!">MAGIC!</option>
+                                
+                                    <option value="Charli XCX">Charli XCX</option>
+                                
+                                    <option value="Sophie">Sophie</option>
+                                
+                                    <option value="Slayyyter">Slayyyter</option>
+                                
+                                    <option value="Caroline Polachek">Caroline Polachek</option>
+                                
+                                    <option value="Addison Rae">Addison Rae</option>
+                                
+                                    <option value="Kim Petras">Kim Petras</option>
+                                
+                                    <option value="A. G. Cook">A. G. Cook</option>
+                                
+                                    <option value="Sky Ferreira">Sky Ferreira</option>
+                                
+                                    <option value="GFOTY">GFOTY</option>
+                                
+                                    <option value="Lorde">Lorde</option>
+                                
+                                    <option value="PinkPantheress">PinkPantheress</option>
+                                
+                                    <option value="Hannah Diamond">Hannah Diamond</option>
+                                
+                                    <option value="Carly Rae Jepsen">Carly Rae Jepsen</option>
+                                
+                                    <option value="Namasenda">Namasenda</option>
+                                
+                                    <option value="Robyn">Robyn</option>
+                                
+                                    <option value="Danny L Harle">Danny L Harle</option>
+                                
+                                    <option value="QT">QT</option>
+                                
+                                    <option value="LIZ">LIZ</option>
+                                
+                                    <option value="Chase Icon">Chase Icon</option>
+                                
+                                    <option value="Charli XCX & Christine and the Queens">Charli XCX & Christine and the Queens</option>
+                                
+                                    <option value="Ayesha Erotica">Ayesha Erotica</option>
+                                
+                                    <option value="ROSÉ">ROSÉ</option>
+                                
+                                    <option value="JISOO">JISOO</option>
+                                
+                                    <option value="Jennie">Jennie</option>
+                                
+                                    <option value="BLACKPINK">BLACKPINK</option>
+                                
+                                    <option value="Rosé, Bruno Mars">Rosé, Bruno Mars</option>
+                                
+                                    <option value="Lisa">Lisa</option>
+                                
+                                    <option value="Baby Monster">Baby Monster</option>
+                                
+                                    <option value="Meovv">Meovv</option>
+                                
+                                    <option value="ROSÉ & Bruno Mars">ROSÉ & Bruno Mars</option>
+                                
+                                    <option value="JEON SOMI">JEON SOMI</option>
+                                
+                                    <option value="Minnie">Minnie</option>
+                                
+                                    <option value="aespa">aespa</option>
+                                
+                                    <option value="Dua Lipa, BLACKPINK">Dua Lipa, BLACKPINK</option>
+                                
+                                    <option value="Kiss of Life">Kiss of Life</option>
+                                
+                                    <option value="(G)I-DLE">(G)I-DLE</option>
+                                
+                                    <option value="Yeji">Yeji</option>
+                                
+                                    <option value="Yuqi">Yuqi</option>
+                                
+                                    <option value="IVE">IVE</option>
+                                
+                                    <option value="Everglow">Everglow</option>
+                                
+                                    <option value="ITZY">ITZY</option>
+                                
+                                    <option value="Fifty Fifty">Fifty Fifty</option>
+                                
+                                    <option value="Lauv">Lauv</option>
+                                
+                                    <option value="V">V</option>
+                                
+                                    <option value="Shawn Mendes">Shawn Mendes</option>
+                                
+                                    <option value="The Chainsmokers">The Chainsmokers</option>
+                                
+                                    <option value="Nick Jonas">Nick Jonas</option>
+                                
+                                    <option value="Khalid">Khalid</option>
+                                
+                                    <option value="Bazzi">Bazzi</option>
+                                
+                                    <option value="HRVY">HRVY</option>
+                                
+                                    <option value="Austin Mahone">Austin Mahone</option>
+                                
+                                    <option value="UMI">UMI</option>
+                                
+                                    <option value="DNCE">DNCE</option>
+                                
+                                    <option value="Meghan Trainor">Meghan Trainor</option>
+                                
+                                    <option value="The Vamps">The Vamps</option>
+                                
+                                    <option value="Why Don't We">Why Don't We</option>
+                                
+                                    <option value="Shawn Mendes & Camila Cabello">Shawn Mendes & Camila Cabello</option>
+                                
+                                    <option value="benny blanco">benny blanco</option>
+                                
+                                    <option value="Cardi B">Cardi B</option>
+                                
+                                    <option value="Megan Thee Stallion">Megan Thee Stallion</option>
+                                
+                                    <option value="Latto">Latto</option>
+                                
+                                    <option value="City Girls">City Girls</option>
+                                
+                                    <option value="Doja Cat">Doja Cat</option>
+                                
+                                    <option value="GloRilla">GloRilla</option>
+                                
+                                    <option value="Pardison Fontaine">Pardison Fontaine</option>
+                                
+                                    <option value="Lizzo">Lizzo</option>
+                                
+                                    <option value="Saweetie">Saweetie</option>
+                                
+                                    <option value="Lil' Kim">Lil' Kim</option>
+                                
+                                    <option value="Monaleo">Monaleo</option>
+                                
+                                    <option value="Flo Milli">Flo Milli</option>
+                                
+                                    <option value="Ice Spice">Ice Spice</option>
+                                
+                                    <option value="Kash Doll">Kash Doll</option>
+                                
+                                    <option value="JT">JT</option>
+                                
+                                    <option value="Bhad Bhabie">Bhad Bhabie</option>
+                                
+                                    <option value="Iggy Azalea">Iggy Azalea</option>
+                                
+                                    <option value="Nicki Minaj">Nicki Minaj</option>
+                                
+                                    <option value="Trina">Trina</option>
+                                
+                                    <option value="The Carters">The Carters</option>
+                                
+                                    <option value="cupcakKe">cupcakKe</option>
+                                
+                                    <option value="Alex Warren">Alex Warren</option>
+                                
+                                    <option value="Myles Smith">Myles Smith</option>
+                                
+                                    <option value="Matt Hansen">Matt Hansen</option>
+                                
+                                    <option value="Dean Lewis">Dean Lewis</option>
+                                
+                                    <option value="Mark Ambor">Mark Ambor</option>
+                                
+                                    <option value="Benson Boone">Benson Boone</option>
+                                
+                                    <option value="Zach Hood">Zach Hood</option>
+                                
+                                    <option value="David Kushner">David Kushner</option>
+                                
+                                    <option value="Cian Ducrot">Cian Ducrot</option>
+                                
+                                    <option value="Abe Parker">Abe Parker</option>
+                                
+                                    <option value="Caleb Hearn">Caleb Hearn</option>
+                                
+                                    <option value="Lauren Spencer Smith">Lauren Spencer Smith</option>
+                                
+                                    <option value="Lewis Capaldi">Lewis Capaldi</option>
+                                
+                                    <option value="Daniel Seavey">Daniel Seavey</option>
+                                
+                                    <option value="Andy Grammer">Andy Grammer</option>
+                                
+                                    <option value="Alexander Stewart">Alexander Stewart</option>
+                                
+                                    <option value="Henry Moodie">Henry Moodie</option>
+                                
+                                    <option value="Noah Kahan">Noah Kahan</option>
+                                
+                                    <option value="Dermot Kennedy">Dermot Kennedy</option>
+                                
+                                    <option value="Jenna Raine">Jenna Raine</option>
+                                
+                                    <option value="Anson Seabra">Anson Seabra</option>
+                                
+                                    <option value="Coldplay">Coldplay</option>
+                                
+                                    <option value="Keane">Keane</option>
+                                
+                                    <option value="OneRepublic">OneRepublic</option>
+                                
+                                    <option value="Imagine Dragons">Imagine Dragons</option>
+                                
+                                    <option value="Snow Patrol">Snow Patrol</option>
+                                
+                                    <option value="U2">U2</option>
+                                
+                                    <option value="Travis">Travis</option>
+                                
+                                    <option value="Muse">Muse</option>
+                                
+                                    <option value="Stereophonics">Stereophonics</option>
+                                
+                                    <option value="Noel Gallagher's High Flying Birds">Noel Gallagher's High Flying Birds</option>
+                                
+                                    <option value="The Killers">The Killers</option>
+                                
+                                    <option value="Thirteen Senses">Thirteen Senses</option>
+                                
+                                    <option value="Oasis">Oasis</option>
+                                
+                                    <option value="The Verve">The Verve</option>
+                                
+                                    <option value="Train">Train</option>
+                                
+                                    <option value="The Script">The Script</option>
+                                
+                                    <option value="Athlete">Athlete</option>
+                                
+                                    <option value="Liam Gallagher">Liam Gallagher</option>
+                                
+                                    <option value="Starsailor">Starsailor</option>
+                                
+                                    <option value="James Blunt">James Blunt</option>
+                                
+                                    <option value="FKA twigs">FKA twigs</option>
+                                
+                                    <option value="Kelela">Kelela</option>
+                                
+                                    <option value="Oklou">Oklou</option>
+                                
+                                    <option value="Arca">Arca</option>
+                                
+                                    <option value="Björk">Björk</option>
+                                
+                                    <option value="Rochelle Jordan">Rochelle Jordan</option>
+                                
+                                    <option value="Eartheater">Eartheater</option>
+                                
+                                    <option value="Erika de Casier">Erika de Casier</option>
+                                
+                                    <option value="Grimes">Grimes</option>
+                                
+                                    <option value="Sevdaliza">Sevdaliza</option>
+                                
+                                    <option value="Blood Orange">Blood Orange</option>
+                                
+                                    <option value="yeule">yeule</option>
+                                
+                                    <option value="SMERZ">SMERZ</option>
+                                
+                                    <option value="POiSON GiRLFRiEND">POiSON GiRLFRiEND</option>
+                                
+                                    <option value="Abra">Abra</option>
+                                
+                                    <option value="SZA">SZA</option>
+                                
+                                    <option value="Kilo Kish">Kilo Kish</option>
+                                
+                                    <option value="Not For Radio">Not For Radio</option>
+                                
+                                    <option value="BANKS">BANKS</option>
+                                
+                                    <option value="Imogen Heap">Imogen Heap</option>
+                                
+                                    <option value="James K">James K</option>
+                                
+                                    <option value="Dua Lipa">Dua Lipa</option>
+                                
+                                    <option value="Ava Max">Ava Max</option>
+                                
+                                    <option value="Silk City">Silk City</option>
+                                
+                                    <option value="Katy Perry">Katy Perry</option>
+                                
+                                    <option value="Zara Larsson">Zara Larsson</option>
+                                
+                                    <option value="Tove Lo">Tove Lo</option>
+                                
+                                    <option value="Lady Gaga">Lady Gaga</option>
+                                
+                                    <option value="Bebe Rexha">Bebe Rexha</option>
+                                
+                                    <option value="Charli xcx">Charli xcx</option>
+                                
+                                    <option value="Madison Beer">Madison Beer</option>
+                                
+                                    <option value="Mabel">Mabel</option>
+                                
+                                    <option value="Rita Ora">Rita Ora</option>
+                                
+                                    <option value="Miley Cyrus">Miley Cyrus</option>
+                                
+                                    <option value="Ellie Goulding">Ellie Goulding</option>
+                                
+                                    <option value="Sabrina Carpenter">Sabrina Carpenter</option>
+                                
+                                    <option value="Selena Gomez">Selena Gomez</option>
+                                
+                                    <option value="Ariana Grande">Ariana Grande</option>
+                                
+                                    <option value="Taylor Swift">Taylor Swift</option>
+                                
+                                    <option value="Tate McRae">Tate McRae</option>
+                                
+                                    <option value="Little Mix">Little Mix</option>
+                                
+                                    <option value="Stray Kids">Stray Kids</option>
+                                
+                                    <option value="Seungmin">Seungmin</option>
+                                
+                                    <option value="Han">Han</option>
+                                
+                                    <option value="KickFlip">KickFlip</option>
+                                
+                                    <option value="Xdinary Heroes">Xdinary Heroes</option>
+                                
+                                    <option value="ATEEZ">ATEEZ</option>
+                                
+                                    <option value="P1Harmony">P1Harmony</option>
+                                
+                                    <option value="ALL(H)OURS">ALL(H)OURS</option>
+                                
+                                    <option value="xikers">xikers</option>
+                                
+                                    <option value="8TURN">8TURN</option>
+                                
+                                    <option value="MONSTA X">MONSTA X</option>
+                                
+                                    <option value="XLOV">XLOV</option>
+                                
+                                    <option value="ONEUS">ONEUS</option>
+                                
+                                    <option value="ENHYPEN">ENHYPEN</option>
+                                
+                                    <option value="Stray Kids, Tiger JK">Stray Kids, Tiger JK</option>
+                                
+                                    <option value="DAY6">DAY6</option>
+                                
+                                    <option value="BOYNEXTDOOR">BOYNEXTDOOR</option>
+                                
+                                    <option value="Seventeen">Seventeen</option>
+                                
+                                    <option value="TAEMIN">TAEMIN</option>
+                                
+                                    <option value="GOT7">GOT7</option>
+                                
+                            </select>
+                        </div>
+                        <div class="col-2 pb-2">
+                            <button type="button" class="btn btn-primary btn-block" onclick="neighbourhoodHighlight({nodes: []});">Reset Selection</button>
+                        </div>
+                    </div>
+                </div>
+            
+            
+            <div id="mynetwork" class="card-body"></div>
+        </div>
+
+        
+            <div id="loadingBar">
+              <div class="outerBorder">
+                <div id="text">0%</div>
+                <div id="border">
+                  <div id="bar"></div>
+                </div>
+              </div>
+            </div>
+        
+        
+
+        <script type="text/javascript">
+
+              // initialize global variables.
+              var edges;
+              var nodes;
+              var allNodes;
+              var allEdges;
+              var nodeColors;
+              var originalNodes;
+              var network;
+              var container;
+              var options, data;
+              var filter = {
+                  item : '',
+                  property : '',
+                  value : []
+              };
+
+              
+                  new TomSelect("#select-node",{
+                      create: false,
+                      sortField: {
+                          field: "text",
+                          direction: "asc"
+                      }
+                  });
+              
+
+              
+
+              // This method is responsible for drawing the graph, returns the drawn network
+              function drawGraph() {
+                  var container = document.getElementById('mynetwork');
+
+                  
+
+                  // parsing and collecting nodes and edges from the python
+                  nodes = new vis.DataSet([{"color": "#97c2fc", "font": {"color": "white"}, "id": "Bruno Mars", "label": "Bruno Mars", "shape": "dot", "size": 60, "title": "Connections: 20"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Bruno Mars, Anderson .Paak, Silk Sonic", "label": "Bruno Mars, Anderson .Paak, Silk Sonic", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Charlie Puth", "label": "Charlie Puth", "shape": "dot", "size": 60, "title": "Connections: 20"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Ne-Yo", "label": "Ne-Yo", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Usher", "label": "Usher", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Maroon 5", "label": "Maroon 5", "shape": "dot", "size": 9, "title": "Connections: 3"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Bruno Mars, Anderson .Paak \u0026 Silk Sonic", "label": "Bruno Mars, Anderson .Paak \u0026 Silk Sonic", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Daniel Caesar", "label": "Daniel Caesar", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Justin Timberlake", "label": "Justin Timberlake", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Rihanna", "label": "Rihanna", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Giv\u0113on", "label": "Giv\u0113on", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "The Weeknd", "label": "The Weeknd", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Jason Der\u00fclo", "label": "Jason Der\u00fclo", "shape": "dot", "size": 6, "title": "Connections: 2"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Craig David", "label": "Craig David", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Michael Jackson", "label": "Michael Jackson", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Justin Bieber", "label": "Justin Bieber", "shape": "dot", "size": 6, "title": "Connections: 2"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Mario", "label": "Mario", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "RAYE", "label": "RAYE", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Olivia Dean", "label": "Olivia Dean", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Jay Sean", "label": "Jay Sean", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "MAGIC!", "label": "MAGIC!", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Charli XCX", "label": "Charli XCX", "shape": "dot", "size": 60, "title": "Connections: 20"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Sophie", "label": "Sophie", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Slayyyter", "label": "Slayyyter", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Caroline Polachek", "label": "Caroline Polachek", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Addison Rae", "label": "Addison Rae", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Kim Petras", "label": "Kim Petras", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "A. G. Cook", "label": "A. G. Cook", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Sky Ferreira", "label": "Sky Ferreira", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "GFOTY", "label": "GFOTY", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Lorde", "label": "Lorde", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "PinkPantheress", "label": "PinkPantheress", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Hannah Diamond", "label": "Hannah Diamond", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Carly Rae Jepsen", "label": "Carly Rae Jepsen", "shape": "dot", "size": 6, "title": "Connections: 2"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Namasenda", "label": "Namasenda", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Robyn", "label": "Robyn", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Danny L Harle", "label": "Danny L Harle", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "QT", "label": "QT", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "LIZ", "label": "LIZ", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Chase Icon", "label": "Chase Icon", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Charli XCX \u0026 Christine and the Queens", "label": "Charli XCX \u0026 Christine and the Queens", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Ayesha Erotica", "label": "Ayesha Erotica", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "ROS\u00c9", "label": "ROS\u00c9", "shape": "dot", "size": 60, "title": "Connections: 20"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "JISOO", "label": "JISOO", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Jennie", "label": "Jennie", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "BLACKPINK", "label": "BLACKPINK", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Ros\u00e9, Bruno Mars", "label": "Ros\u00e9, Bruno Mars", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Lisa", "label": "Lisa", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Baby Monster", "label": "Baby Monster", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Meovv", "label": "Meovv", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "ROS\u00c9 \u0026 Bruno Mars", "label": "ROS\u00c9 \u0026 Bruno Mars", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "JEON SOMI", "label": "JEON SOMI", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Minnie", "label": "Minnie", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "aespa", "label": "aespa", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Dua Lipa, BLACKPINK", "label": "Dua Lipa, BLACKPINK", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Kiss of Life", "label": "Kiss of Life", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "(G)I-DLE", "label": "(G)I-DLE", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Yeji", "label": "Yeji", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Yuqi", "label": "Yuqi", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "IVE", "label": "IVE", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Everglow", "label": "Everglow", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "ITZY", "label": "ITZY", "shape": "dot", "size": 6, "title": "Connections: 2"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Fifty Fifty", "label": "Fifty Fifty", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Lauv", "label": "Lauv", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "V", "label": "V", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Shawn Mendes", "label": "Shawn Mendes", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "The Chainsmokers", "label": "The Chainsmokers", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Nick Jonas", "label": "Nick Jonas", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Khalid", "label": "Khalid", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Bazzi", "label": "Bazzi", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "HRVY", "label": "HRVY", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Austin Mahone", "label": "Austin Mahone", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "UMI", "label": "UMI", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "DNCE", "label": "DNCE", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Meghan Trainor", "label": "Meghan Trainor", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "The Vamps", "label": "The Vamps", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Why Don\u0027t We", "label": "Why Don\u0027t We", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Shawn Mendes \u0026 Camila Cabello", "label": "Shawn Mendes \u0026 Camila Cabello", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "benny blanco", "label": "benny blanco", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Cardi B", "label": "Cardi B", "shape": "dot", "size": 60, "title": "Connections: 20"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Megan Thee Stallion", "label": "Megan Thee Stallion", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Latto", "label": "Latto", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "City Girls", "label": "City Girls", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Doja Cat", "label": "Doja Cat", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "GloRilla", "label": "GloRilla", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Pardison Fontaine", "label": "Pardison Fontaine", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Lizzo", "label": "Lizzo", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Saweetie", "label": "Saweetie", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Lil\u0027 Kim", "label": "Lil\u0027 Kim", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Monaleo", "label": "Monaleo", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Flo Milli", "label": "Flo Milli", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Ice Spice", "label": "Ice Spice", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Kash Doll", "label": "Kash Doll", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "JT", "label": "JT", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Bhad Bhabie", "label": "Bhad Bhabie", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Iggy Azalea", "label": "Iggy Azalea", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Nicki Minaj", "label": "Nicki Minaj", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Trina", "label": "Trina", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "The Carters", "label": "The Carters", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "cupcakKe", "label": "cupcakKe", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Alex Warren", "label": "Alex Warren", "shape": "dot", "size": 60, "title": "Connections: 20"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Myles Smith", "label": "Myles Smith", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Matt Hansen", "label": "Matt Hansen", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Dean Lewis", "label": "Dean Lewis", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Mark Ambor", "label": "Mark Ambor", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Benson Boone", "label": "Benson Boone", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Zach Hood", "label": "Zach Hood", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "David Kushner", "label": "David Kushner", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Cian Ducrot", "label": "Cian Ducrot", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Abe Parker", "label": "Abe Parker", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Caleb Hearn", "label": "Caleb Hearn", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Lauren Spencer Smith", "label": "Lauren Spencer Smith", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Lewis Capaldi", "label": "Lewis Capaldi", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Daniel Seavey", "label": "Daniel Seavey", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Andy Grammer", "label": "Andy Grammer", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Alexander Stewart", "label": "Alexander Stewart", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Henry Moodie", "label": "Henry Moodie", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Noah Kahan", "label": "Noah Kahan", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Dermot Kennedy", "label": "Dermot Kennedy", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Jenna Raine", "label": "Jenna Raine", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Anson Seabra", "label": "Anson Seabra", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Coldplay", "label": "Coldplay", "shape": "dot", "size": 60, "title": "Connections: 20"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Keane", "label": "Keane", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "OneRepublic", "label": "OneRepublic", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Imagine Dragons", "label": "Imagine Dragons", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Snow Patrol", "label": "Snow Patrol", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "U2", "label": "U2", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Travis", "label": "Travis", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Muse", "label": "Muse", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Stereophonics", "label": "Stereophonics", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Noel Gallagher\u0027s High Flying Birds", "label": "Noel Gallagher\u0027s High Flying Birds", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "The Killers", "label": "The Killers", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Thirteen Senses", "label": "Thirteen Senses", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Oasis", "label": "Oasis", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "The Verve", "label": "The Verve", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Train", "label": "Train", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "The Script", "label": "The Script", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Athlete", "label": "Athlete", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Liam Gallagher", "label": "Liam Gallagher", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Starsailor", "label": "Starsailor", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "James Blunt", "label": "James Blunt", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "FKA twigs", "label": "FKA twigs", "shape": "dot", "size": 60, "title": "Connections: 20"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Kelela", "label": "Kelela", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Oklou", "label": "Oklou", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Arca", "label": "Arca", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Bj\u00f6rk", "label": "Bj\u00f6rk", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Rochelle Jordan", "label": "Rochelle Jordan", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Eartheater", "label": "Eartheater", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Erika de Casier", "label": "Erika de Casier", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Grimes", "label": "Grimes", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Sevdaliza", "label": "Sevdaliza", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Blood Orange", "label": "Blood Orange", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "yeule", "label": "yeule", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "SMERZ", "label": "SMERZ", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "POiSON GiRLFRiEND", "label": "POiSON GiRLFRiEND", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Abra", "label": "Abra", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "SZA", "label": "SZA", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Kilo Kish", "label": "Kilo Kish", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Not For Radio", "label": "Not For Radio", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "BANKS", "label": "BANKS", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Imogen Heap", "label": "Imogen Heap", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "James K", "label": "James K", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Dua Lipa", "label": "Dua Lipa", "shape": "dot", "size": 60, "title": "Connections: 20"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Ava Max", "label": "Ava Max", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Silk City", "label": "Silk City", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Katy Perry", "label": "Katy Perry", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Zara Larsson", "label": "Zara Larsson", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Tove Lo", "label": "Tove Lo", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Lady Gaga", "label": "Lady Gaga", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Bebe Rexha", "label": "Bebe Rexha", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Charli xcx", "label": "Charli xcx", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Madison Beer", "label": "Madison Beer", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Mabel", "label": "Mabel", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Rita Ora", "label": "Rita Ora", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Miley Cyrus", "label": "Miley Cyrus", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Ellie Goulding", "label": "Ellie Goulding", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Sabrina Carpenter", "label": "Sabrina Carpenter", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Selena Gomez", "label": "Selena Gomez", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Ariana Grande", "label": "Ariana Grande", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Taylor Swift", "label": "Taylor Swift", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Tate McRae", "label": "Tate McRae", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Little Mix", "label": "Little Mix", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Stray Kids", "label": "Stray Kids", "shape": "dot", "size": 60, "title": "Connections: 20"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Seungmin", "label": "Seungmin", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Han", "label": "Han", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "KickFlip", "label": "KickFlip", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Xdinary Heroes", "label": "Xdinary Heroes", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "ATEEZ", "label": "ATEEZ", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "P1Harmony", "label": "P1Harmony", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "ALL(H)OURS", "label": "ALL(H)OURS", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "xikers", "label": "xikers", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "8TURN", "label": "8TURN", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "MONSTA X", "label": "MONSTA X", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "XLOV", "label": "XLOV", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "ONEUS", "label": "ONEUS", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "ENHYPEN", "label": "ENHYPEN", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Stray Kids, Tiger JK", "label": "Stray Kids, Tiger JK", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "DAY6", "label": "DAY6", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "BOYNEXTDOOR", "label": "BOYNEXTDOOR", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Seventeen", "label": "Seventeen", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "TAEMIN", "label": "TAEMIN", "shape": "dot", "size": 3, "title": "Connections: 1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "GOT7", "label": "GOT7", "shape": "dot", "size": 3, "title": "Connections: 1"}]);
+                  edges = new vis.DataSet([{"from": "Bruno Mars", "to": "Bruno Mars, Anderson .Paak, Silk Sonic", "value": 1.0}, {"from": "Bruno Mars", "to": "Charlie Puth", "value": 0.845834}, {"from": "Bruno Mars", "to": "Ne-Yo", "value": 0.742982}, {"from": "Bruno Mars", "to": "Usher", "value": 0.737535}, {"from": "Bruno Mars", "to": "Maroon 5", "value": 0.716526}, {"from": "Bruno Mars", "to": "Bruno Mars, Anderson .Paak \u0026 Silk Sonic", "value": 0.712438}, {"from": "Bruno Mars", "to": "Daniel Caesar", "value": 0.702854}, {"from": "Bruno Mars", "to": "Justin Timberlake", "value": 0.675807}, {"from": "Bruno Mars", "to": "Rihanna", "value": 0.641621}, {"from": "Bruno Mars", "to": "Giv\u0113on", "value": 0.619724}, {"from": "Bruno Mars", "to": "The Weeknd", "value": 0.604831}, {"from": "Bruno Mars", "to": "Jason Der\u00fclo", "value": 0.604034}, {"from": "Bruno Mars", "to": "Craig David", "value": 0.565485}, {"from": "Bruno Mars", "to": "Michael Jackson", "value": 0.536335}, {"from": "Bruno Mars", "to": "Justin Bieber", "value": 0.521735}, {"from": "Bruno Mars", "to": "Mario", "value": 0.506139}, {"from": "Bruno Mars", "to": "RAYE", "value": 0.500255}, {"from": "Bruno Mars", "to": "Olivia Dean", "value": 0.481194}, {"from": "Bruno Mars", "to": "Jay Sean", "value": 0.464016}, {"from": "Bruno Mars", "to": "MAGIC!", "value": 0.45651}, {"from": "Charlie Puth", "to": "Lauv", "value": 1.0}, {"from": "Charlie Puth", "to": "V", "value": 0.742841}, {"from": "Charlie Puth", "to": "Maroon 5", "value": 0.725358}, {"from": "Charlie Puth", "to": "Shawn Mendes", "value": 0.710261}, {"from": "Charlie Puth", "to": "The Chainsmokers", "value": 0.684304}, {"from": "Charlie Puth", "to": "Nick Jonas", "value": 0.675022}, {"from": "Charlie Puth", "to": "Khalid", "value": 0.671123}, {"from": "Charlie Puth", "to": "Bazzi", "value": 0.667628}, {"from": "Charlie Puth", "to": "HRVY", "value": 0.620531}, {"from": "Charlie Puth", "to": "Austin Mahone", "value": 0.608304}, {"from": "Charlie Puth", "to": "Jason Der\u00fclo", "value": 0.606187}, {"from": "Charlie Puth", "to": "Justin Bieber", "value": 0.597507}, {"from": "Charlie Puth", "to": "UMI", "value": 0.58797}, {"from": "Charlie Puth", "to": "DNCE", "value": 0.576634}, {"from": "Charlie Puth", "to": "Meghan Trainor", "value": 0.570233}, {"from": "Charlie Puth", "to": "The Vamps", "value": 0.558817}, {"from": "Charlie Puth", "to": "Why Don\u0027t We", "value": 0.557587}, {"from": "Charlie Puth", "to": "Shawn Mendes \u0026 Camila Cabello", "value": 0.546116}, {"from": "Charlie Puth", "to": "benny blanco", "value": 0.537228}, {"from": "Maroon 5", "to": "Coldplay", "value": 0.402043}, {"from": "Charli XCX", "to": "Sophie", "value": 1.0}, {"from": "Charli XCX", "to": "Slayyyter", "value": 0.925467}, {"from": "Charli XCX", "to": "Caroline Polachek", "value": 0.703938}, {"from": "Charli XCX", "to": "Addison Rae", "value": 0.693064}, {"from": "Charli XCX", "to": "Kim Petras", "value": 0.673775}, {"from": "Charli XCX", "to": "A. G. Cook", "value": 0.672737}, {"from": "Charli XCX", "to": "Sky Ferreira", "value": 0.622154}, {"from": "Charli XCX", "to": "GFOTY", "value": 0.596683}, {"from": "Charli XCX", "to": "Lorde", "value": 0.56132}, {"from": "Charli XCX", "to": "PinkPantheress", "value": 0.512886}, {"from": "Charli XCX", "to": "Hannah Diamond", "value": 0.502364}, {"from": "Charli XCX", "to": "Carly Rae Jepsen", "value": 0.475799}, {"from": "Charli XCX", "to": "Namasenda", "value": 0.455556}, {"from": "Charli XCX", "to": "Robyn", "value": 0.429002}, {"from": "Charli XCX", "to": "Danny L Harle", "value": 0.417068}, {"from": "Charli XCX", "to": "QT", "value": 0.411873}, {"from": "Charli XCX", "to": "LIZ", "value": 0.403596}, {"from": "Charli XCX", "to": "Chase Icon", "value": 0.398302}, {"from": "Charli XCX", "to": "Charli XCX \u0026 Christine and the Queens", "value": 0.384752}, {"from": "Charli XCX", "to": "Ayesha Erotica", "value": 0.377345}, {"from": "Carly Rae Jepsen", "to": "Dua Lipa", "value": 0.581734}, {"from": "ROS\u00c9", "to": "JISOO", "value": 1.0}, {"from": "ROS\u00c9", "to": "Jennie", "value": 0.855771}, {"from": "ROS\u00c9", "to": "BLACKPINK", "value": 0.852117}, {"from": "ROS\u00c9", "to": "Ros\u00e9, Bruno Mars", "value": 0.811794}, {"from": "ROS\u00c9", "to": "Lisa", "value": 0.643866}, {"from": "ROS\u00c9", "to": "Baby Monster", "value": 0.427752}, {"from": "ROS\u00c9", "to": "Meovv", "value": 0.30853}, {"from": "ROS\u00c9", "to": "ROS\u00c9 \u0026 Bruno Mars", "value": 0.300045}, {"from": "ROS\u00c9", "to": "JEON SOMI", "value": 0.293024}, {"from": "ROS\u00c9", "to": "Minnie", "value": 0.232189}, {"from": "ROS\u00c9", "to": "aespa", "value": 0.21267}, {"from": "ROS\u00c9", "to": "Dua Lipa, BLACKPINK", "value": 0.200272}, {"from": "ROS\u00c9", "to": "Kiss of Life", "value": 0.197289}, {"from": "ROS\u00c9", "to": "(G)I-DLE", "value": 0.190113}, {"from": "ROS\u00c9", "to": "Yeji", "value": 0.187548}, {"from": "ROS\u00c9", "to": "Yuqi", "value": 0.186734}, {"from": "ROS\u00c9", "to": "IVE", "value": 0.176706}, {"from": "ROS\u00c9", "to": "Everglow", "value": 0.169111}, {"from": "ROS\u00c9", "to": "ITZY", "value": 0.167748}, {"from": "ROS\u00c9", "to": "Fifty Fifty", "value": 0.164705}, {"from": "ITZY", "to": "Stray Kids", "value": 0.153861}, {"from": "Cardi B", "to": "Megan Thee Stallion", "value": 1.0}, {"from": "Cardi B", "to": "Latto", "value": 0.859373}, {"from": "Cardi B", "to": "City Girls", "value": 0.693787}, {"from": "Cardi B", "to": "Doja Cat", "value": 0.637069}, {"from": "Cardi B", "to": "GloRilla", "value": 0.600112}, {"from": "Cardi B", "to": "Pardison Fontaine", "value": 0.587435}, {"from": "Cardi B", "to": "Lizzo", "value": 0.578504}, {"from": "Cardi B", "to": "Saweetie", "value": 0.545108}, {"from": "Cardi B", "to": "Lil\u0027 Kim", "value": 0.529759}, {"from": "Cardi B", "to": "Monaleo", "value": 0.497683}, {"from": "Cardi B", "to": "Flo Milli", "value": 0.453028}, {"from": "Cardi B", "to": "Ice Spice", "value": 0.447623}, {"from": "Cardi B", "to": "Kash Doll", "value": 0.430607}, {"from": "Cardi B", "to": "JT", "value": 0.427145}, {"from": "Cardi B", "to": "Bhad Bhabie", "value": 0.422905}, {"from": "Cardi B", "to": "Iggy Azalea", "value": 0.41214}, {"from": "Cardi B", "to": "Nicki Minaj", "value": 0.410627}, {"from": "Cardi B", "to": "Trina", "value": 0.387223}, {"from": "Cardi B", "to": "The Carters", "value": 0.361871}, {"from": "Cardi B", "to": "cupcakKe", "value": 0.361724}, {"from": "Alex Warren", "to": "Myles Smith", "value": 1.0}, {"from": "Alex Warren", "to": "Matt Hansen", "value": 0.866233}, {"from": "Alex Warren", "to": "Dean Lewis", "value": 0.678243}, {"from": "Alex Warren", "to": "Mark Ambor", "value": 0.60908}, {"from": "Alex Warren", "to": "Benson Boone", "value": 0.547004}, {"from": "Alex Warren", "to": "Zach Hood", "value": 0.490898}, {"from": "Alex Warren", "to": "David Kushner", "value": 0.459876}, {"from": "Alex Warren", "to": "Cian Ducrot", "value": 0.408568}, {"from": "Alex Warren", "to": "Abe Parker", "value": 0.389228}, {"from": "Alex Warren", "to": "Caleb Hearn", "value": 0.380072}, {"from": "Alex Warren", "to": "Lauren Spencer Smith", "value": 0.380052}, {"from": "Alex Warren", "to": "Lewis Capaldi", "value": 0.379857}, {"from": "Alex Warren", "to": "Daniel Seavey", "value": 0.34354}, {"from": "Alex Warren", "to": "Andy Grammer", "value": 0.324609}, {"from": "Alex Warren", "to": "Alexander Stewart", "value": 0.322274}, {"from": "Alex Warren", "to": "Henry Moodie", "value": 0.311201}, {"from": "Alex Warren", "to": "Noah Kahan", "value": 0.30893}, {"from": "Alex Warren", "to": "Dermot Kennedy", "value": 0.30292}, {"from": "Alex Warren", "to": "Jenna Raine", "value": 0.294588}, {"from": "Alex Warren", "to": "Anson Seabra", "value": 0.283914}, {"from": "Coldplay", "to": "Keane", "value": 1.0}, {"from": "Coldplay", "to": "OneRepublic", "value": 0.793917}, {"from": "Coldplay", "to": "Imagine Dragons", "value": 0.768756}, {"from": "Coldplay", "to": "Snow Patrol", "value": 0.701054}, {"from": "Coldplay", "to": "U2", "value": 0.658793}, {"from": "Coldplay", "to": "Travis", "value": 0.607051}, {"from": "Coldplay", "to": "Muse", "value": 0.531558}, {"from": "Coldplay", "to": "Stereophonics", "value": 0.522217}, {"from": "Coldplay", "to": "Noel Gallagher\u0027s High Flying Birds", "value": 0.466902}, {"from": "Coldplay", "to": "The Killers", "value": 0.447414}, {"from": "Coldplay", "to": "Thirteen Senses", "value": 0.446348}, {"from": "Coldplay", "to": "Oasis", "value": 0.445773}, {"from": "Coldplay", "to": "The Verve", "value": 0.405922}, {"from": "Coldplay", "to": "Train", "value": 0.391018}, {"from": "Coldplay", "to": "The Script", "value": 0.38924}, {"from": "Coldplay", "to": "Athlete", "value": 0.389217}, {"from": "Coldplay", "to": "Liam Gallagher", "value": 0.383954}, {"from": "Coldplay", "to": "Starsailor", "value": 0.377117}, {"from": "Coldplay", "to": "James Blunt", "value": 0.365443}, {"from": "FKA twigs", "to": "Kelela", "value": 1.0}, {"from": "FKA twigs", "to": "Oklou", "value": 0.674699}, {"from": "FKA twigs", "to": "Arca", "value": 0.668668}, {"from": "FKA twigs", "to": "Bj\u00f6rk", "value": 0.634097}, {"from": "FKA twigs", "to": "Rochelle Jordan", "value": 0.633544}, {"from": "FKA twigs", "to": "Eartheater", "value": 0.60345}, {"from": "FKA twigs", "to": "Erika de Casier", "value": 0.479167}, {"from": "FKA twigs", "to": "Grimes", "value": 0.411181}, {"from": "FKA twigs", "to": "Sevdaliza", "value": 0.323653}, {"from": "FKA twigs", "to": "Blood Orange", "value": 0.28328}, {"from": "FKA twigs", "to": "yeule", "value": 0.277407}, {"from": "FKA twigs", "to": "SMERZ", "value": 0.230198}, {"from": "FKA twigs", "to": "POiSON GiRLFRiEND", "value": 0.213944}, {"from": "FKA twigs", "to": "Abra", "value": 0.207977}, {"from": "FKA twigs", "to": "SZA", "value": 0.206683}, {"from": "FKA twigs", "to": "Kilo Kish", "value": 0.203813}, {"from": "FKA twigs", "to": "Not For Radio", "value": 0.200036}, {"from": "FKA twigs", "to": "BANKS", "value": 0.197016}, {"from": "FKA twigs", "to": "Imogen Heap", "value": 0.184464}, {"from": "FKA twigs", "to": "James K", "value": 0.164904}, {"from": "Dua Lipa", "to": "Ava Max", "value": 1.0}, {"from": "Dua Lipa", "to": "Silk City", "value": 0.946031}, {"from": "Dua Lipa", "to": "Katy Perry", "value": 0.851602}, {"from": "Dua Lipa", "to": "Zara Larsson", "value": 0.82438}, {"from": "Dua Lipa", "to": "Tove Lo", "value": 0.605659}, {"from": "Dua Lipa", "to": "Lady Gaga", "value": 0.596904}, {"from": "Dua Lipa", "to": "Bebe Rexha", "value": 0.583457}, {"from": "Dua Lipa", "to": "Charli xcx", "value": 0.567888}, {"from": "Dua Lipa", "to": "Madison Beer", "value": 0.55523}, {"from": "Dua Lipa", "to": "Mabel", "value": 0.55268}, {"from": "Dua Lipa", "to": "Rita Ora", "value": 0.552414}, {"from": "Dua Lipa", "to": "Miley Cyrus", "value": 0.54964}, {"from": "Dua Lipa", "to": "Ellie Goulding", "value": 0.533097}, {"from": "Dua Lipa", "to": "Sabrina Carpenter", "value": 0.530619}, {"from": "Dua Lipa", "to": "Selena Gomez", "value": 0.529355}, {"from": "Dua Lipa", "to": "Ariana Grande", "value": 0.525043}, {"from": "Dua Lipa", "to": "Taylor Swift", "value": 0.516257}, {"from": "Dua Lipa", "to": "Tate McRae", "value": 0.511563}, {"from": "Dua Lipa", "to": "Little Mix", "value": 0.510045}, {"from": "Stray Kids", "to": "Seungmin", "value": 1.0}, {"from": "Stray Kids", "to": "Han", "value": 0.446776}, {"from": "Stray Kids", "to": "KickFlip", "value": 0.278476}, {"from": "Stray Kids", "to": "Xdinary Heroes", "value": 0.269688}, {"from": "Stray Kids", "to": "ATEEZ", "value": 0.254087}, {"from": "Stray Kids", "to": "P1Harmony", "value": 0.245235}, {"from": "Stray Kids", "to": "ALL(H)OURS", "value": 0.178139}, {"from": "Stray Kids", "to": "xikers", "value": 0.169098}, {"from": "Stray Kids", "to": "8TURN", "value": 0.158115}, {"from": "Stray Kids", "to": "MONSTA X", "value": 0.155317}, {"from": "Stray Kids", "to": "XLOV", "value": 0.147993}, {"from": "Stray Kids", "to": "ONEUS", "value": 0.141146}, {"from": "Stray Kids", "to": "ENHYPEN", "value": 0.136968}, {"from": "Stray Kids", "to": "Stray Kids, Tiger JK", "value": 0.132936}, {"from": "Stray Kids", "to": "DAY6", "value": 0.132878}, {"from": "Stray Kids", "to": "BOYNEXTDOOR", "value": 0.126418}, {"from": "Stray Kids", "to": "Seventeen", "value": 0.126059}, {"from": "Stray Kids", "to": "TAEMIN", "value": 0.125522}, {"from": "Stray Kids", "to": "GOT7", "value": 0.124297}]);
+
+                  nodeColors = {};
+                  allNodes = nodes.get({ returnType: "Object" });
+                  for (nodeId in allNodes) {
+                    nodeColors[nodeId] = allNodes[nodeId].color;
+                  }
+                  allEdges = edges.get({ returnType: "Object" });
+                  // adding nodes and edges to the graph
+                  data = {nodes: nodes, edges: edges};
+
+                  var options = {
+    "configure": {
+        "enabled": false
+    },
+    "edges": {
+        "color": {
+            "inherit": true
+        },
+        "smooth": {
+            "enabled": true,
+            "type": "dynamic"
+        }
+    },
+    "interaction": {
+        "dragNodes": true,
+        "hideEdgesOnDrag": false,
+        "hideNodesOnDrag": false
+    },
+    "physics": {
+        "enabled": true,
+        "repulsion": {
+            "centralGravity": 0.2,
+            "damping": 0.09,
+            "nodeDistance": 150,
+            "springConstant": 0.05,
+            "springLength": 200
+        },
+        "solver": "repulsion",
+        "stabilization": {
+            "enabled": true,
+            "fit": true,
+            "iterations": 1000,
+            "onlyDynamicEdges": false,
+            "updateInterval": 50
+        }
+    }
+};
+
+                  
+
+
+                  
+
+                  network = new vis.Network(container, data, options);
+
+                  
+
+                  
+                    network.on("selectNode", neighbourhoodHighlight);
+                  
+
+                  
+
+
+                  
+                      network.on("stabilizationProgress", function(params) {
+                          document.getElementById('loadingBar').removeAttribute("style");
+                          var maxWidth = 496;
+                          var minWidth = 20;
+                          var widthFactor = params.iterations/params.total;
+                          var width = Math.max(minWidth,maxWidth * widthFactor);
+                          document.getElementById('bar').style.width = width + 'px';
+                          document.getElementById('text').innerHTML = Math.round(widthFactor*100) + '%';
+                      });
+                      network.once("stabilizationIterationsDone", function() {
+                          document.getElementById('text').innerHTML = '100%';
+                          document.getElementById('bar').style.width = '496px';
+                          document.getElementById('loadingBar').style.opacity = 0;
+                          // really clean the dom element
+                          setTimeout(function () {document.getElementById('loadingBar').style.display = 'none';}, 500);
+                      });
+                  
+
+                  return network;
+
+              }
+              drawGraph();
+        </script>
+    </body>
+</html>
